@@ -253,4 +253,3 @@ label_currency(accuracy = 1, prefix = "USD ")(sum(tmp$TotalResidentialLosses)) %
 label_currency(accuracy = .01, scale = 1e-09, prefix = "USD ",  suffix = " Billion")(sum(tmp$TotalResidentialLosses)) %>%
   trimws()
 
-
