@@ -210,6 +210,11 @@ addrs_with_fire <-
 
 rm(addrs_in_fire_areas)
 
+LACO_Map <- 
+  get_spatial_layer("https://public.gis.lacounty.gov/public/rest/services/LACounty_Dynamic/Political_Boundaries/MapServer/26") %>% 
+  st_transform(., 2229) %>% # change coordinate system to LA County official system
+  st_make_valid()
+
 finalFires %>%
   ggplot() +
   geom_sf(aes(fill = EventName),
