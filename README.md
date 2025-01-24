@@ -9,12 +9,21 @@ Most of my visualization work is coded with R, directories will include datasets
 
 | **Topic**                                        | **Main Packages**                     | **Source**                    |
 |:-------------------------------------------------|:--------------------------------------|:------------------------------|
-| [So_Cal_Fires_2025](./So_Cal_Fires_2025)         | tidyverse, sf                         | SoCalFires 2025, LACO Parcels |
+| [SoCalFires 2025](./So_Cal_Fires_2025)           | tidyverse, sf                         | SoCalFires 2025, LACO Parcels |
 
 
 # Gallery
 
-## [SoCal Fires 2025](./So_Cal_Fires_2025)
+## [SoCalFires 2025](./So_Cal_Fires_2025)
+
+Approximately 15,131 homes were damaged and the cost to rebuild is about USD 31.62 Billion. 
 
 ![plot](./So_Cal_Fires_2025/plots/So_Cal_Fires_2025.png)
+
+
+
+
+
+
+
 

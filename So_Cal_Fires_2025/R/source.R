@@ -216,17 +216,20 @@ LACO_Map <-
   st_make_valid()
 
 finalFires %>%
+  filter(EventName != "tmp3") %>% 
   ggplot() +
   geom_sf(aes(fill = EventName),
           show.legend = TRUE) +
   geom_sf(data = addrs_with_fire %>%
             select(id) %>%
             sample_n(500),
-          aes(), color = "gray", alpha = .7) +
-  scale_fill_manual(name = "",values = RColorBrewer::brewer.pal(9, "Spectral")) +
-  theme(legend.position = "bottom")
+          aes(), color = "gray", alpha = .7, size = .1) +
+  scale_fill_manual(name = NULL, values = RColorBrewer::brewer.pal(9, "Spectral")) +
+  geom_sf(data = LACO_Map, fill = NA) +
+  theme(legend.position = "bottom") +
+  labs(title = "So Cal Fires 2025")
 
-ggsave("So_Cal_Fires_2025/plots/So_Cal_Fires_2025.png")
+ggsave("So_Cal_Fires_2025/plots/So_Cal_Fires_2025_LACO_SUP_DIST.png")
 
 addrs_with_fire %>%
   st_drop_geometry() %>%
