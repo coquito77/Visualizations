@@ -18,7 +18,7 @@ Most of my visualization work is coded with R, directories will include datasets
 
 Approximately 15,131 homes were damaged and the cost to rebuild is about USD 31.62 Billion. 
 
-![plot](./So_Cal_Fires_2025/plots/So_Cal_Fires_2025.png)
+![plot](./So_Cal_Fires_2025/plots/So_Cal_Fires_2025_LACO_SUP_DIST.png)
 
 
 
