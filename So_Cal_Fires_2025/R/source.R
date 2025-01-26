@@ -246,18 +246,24 @@ tmp <-
   addrs_with_fire %>%
   st_drop_geometry() %>%
   filter(UseType == "Residential") %>%
-  count(EventName) %>% 
-  mutate(PcntHomesBurned = n * est_homes_burned,
+  count(EventName, name = "Residential_in_Footprint") %>% 
+  mutate(PcntHomesBurned = Residential_in_Footprint * est_homes_burned,
          HomePrice = case_when(EventName == "EATON" ~ 
                                  1248945 - 400000,  # https://www.zillow.com/home-values/30187/altadena-ca/
                                EventName == "PALISADES" ~ 
                                  3462178 - 400000, # https://www.zillow.com/home-values/19810/pacific-palisades-los-angeles-ca/
                                TRUE ~ 948383 - 400000), # https://www.zillow.com/home-values/12447/los-angeles-ca/
-         TotalResidentialLosses = PcntHomesBurned * HomePrice)
+         TotalResidentialLosses = PcntHomesBurned * HomePrice) %>% 
+  arrange(desc(TotalResidentialLosses)) %>% 
+  bind_rows( summarise(., across(where(is.numeric), ~ sum(., na.rm = TRUE ) ))) %>% 
+  `[[<-`(nrow(.), 1, value = "Total Residences")
 
-label_currency(accuracy = 1, prefix = "USD ")(sum(tmp$TotalResidentialLosses)) %>%
+label_currency(accuracy = .01, scale = 1e-09, prefix = "USD ",
+               suffix = " Billion")(sum(tmp$TotalResidentialLosses)) %>%
   trimws()
 
-label_currency(accuracy = .01, scale = 1e-09, prefix = "USD ",  suffix = " Billion")(sum(tmp$TotalResidentialLosses)) %>%
-  trimws()
+tmp$TotalResidentialLosses <- label_currency(scale_cut = cut_short_scale())(tmp$TotalResidentialLosses)
 
+tmp %>% 
+  mutate(across(c(Residential_in_Footprint, PcntHomesBurned, HomePrice), ~ comma (.))) %>% 
+  write.table(., file = "clipboard-16384", sep = "\t", row.names = FALSE)

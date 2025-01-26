@@ -16,7 +16,17 @@ Most of my visualization work is coded with R, directories will include datasets
 
 ## [SoCalFires 2025](./So_Cal_Fires_2025)
 
-Approximately 15,131 homes were damaged and the cost to rebuild is about USD 31.62 Billion. 
+This analysis shows that approximately 15,131 homes were damaged and the cost to rebuild is about USD 31.62 Billion.
+
+|EventName|Residential_in_Footprint|PcntHomesBurned|HomePrice|TotalResidentialLosses|
+|:--------|------------------------|---------------|=--------|---------------------:|
+|PALISADES|                  10,614|        8,491.2|3,062,178|                $26.0B|
+|EATON    |                   8,232|        6,585.6|  848,945|                 $5.6B|
+|HURST    |                      56|           44.8|  548,383|               $24.57M|
+|KENNETH  |                       6|            4.8|  548,383|                $2.63M|
+|LIDIA    |                       5|            4.0|  548,383|                $2.19M|
+|SUNSET   |                       1|            0.8|  548,383|                 $439K|
+|Total    |                  18,914|       15,131.2|6,104,655|                $31.6B|
 
 ![plot](./So_Cal_Fires_2025/plots/So_Cal_Fires_2025_LACO_SUP_DIST.png)
 
