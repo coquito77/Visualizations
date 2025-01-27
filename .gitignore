@@ -2,3 +2,7 @@
 .Rhistory
 .RData
 .Ruserdata
+Visualizations.Rproj
+
+*So_Cal_Fires_2025/data/tmpzip/*
+*LACO_Residential_Land/data/LACounty_Parcels.gdb*

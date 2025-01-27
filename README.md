@@ -28,10 +28,15 @@ This analysis shows that approximately 15,131 homes were damaged and the cost to
 |SUNSET   |                       1|            0.8|  548,383|                 $439K|
 |Total    |                  18,914|       15,131.2|6,104,655|                $31.6B|
 
-![plot](./So_Cal_Fires_2025/plots/So_Cal_Fires_2025_LACO_SUP_DIST.png)
+![Map of SoCal Fires](./So_Cal_Fires_2025/plots/So_Cal_Fires_2025_LACO_SUP_DIST.png)
 
 
+## ## [Los Angeles County Residential Land](./LACO_Residential_Land)
 
+- This analysis shows that the approximate Residential land area in the County is 2,436 square miles.
+- The total land area in the County is 5,209 square miles.
+
+![Map of Residential Use Areas](./LACO_Residential_Land/output/LACO_Parcels_Disolved.png)
 
 
 
