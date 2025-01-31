@@ -27,7 +27,7 @@ This analysis shows that approximately 15,131 homes were damaged and the cost to
 |KENNETH       |                                6|                4.8|      548,383|                    $2.63M|
 |LIDIA         |                                5|                4.0|      548,383|                    $2.19M|
 |SUNSET        |                                1|                0.8|      548,383|                     $439K|
-|Total         |                           18,914|           15,131.2|    6,104,655|                    $31.6B|
+|Total         |                           18,914|           15,131.2|            0|                    $31.6B|
 
 ![Map of SoCal Fires](./So_Cal_Fires_2025/plots/So_Cal_Fires_2025_LACO_SUP_DIST.png)
 

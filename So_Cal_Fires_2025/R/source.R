@@ -95,7 +95,7 @@ st_Boxes %>%
   ggplot() +
   geom_sf(aes(fill = id))
 
-st_centroid_within_poly <- function (poly) {
+st_centroid_within_poly <- function(poly) {
   # check if centroid is in polygon
   centroid <- poly %>% st_centroid()
   in_poly <- st_within(centroid, poly, sparse = F)[[1]]
@@ -129,11 +129,12 @@ finalFires <-
 # download the file of Los Angeles County Parcels
 
 if (!any(file.exists(list.files("So_Cal_Fires_2025/data/tmpzip/",
-                            full.names = TRUE, pattern = "gdb"))) ) {
+                                full.names = TRUE, pattern = "gdb"))) ) {
   
   td = tempdir()
   # create the placeholder file
   tf = tempfile(tmpdir = td, fileext = ".zip")
+  
   library(httr)
   
   response <- GET("https://apps.gis.lacounty.gov/hubfiles/LACounty_Parcels.zip",
@@ -145,6 +146,8 @@ if (!any(file.exists(list.files("So_Cal_Fires_2025/data/tmpzip/",
   
   st_layers(list.files("So_Cal_Fires_2025/data/tmpzip/",
                        full.names = TRUE, pattern = "gdb"))
+  
+  unlink(tf) # remove the large file
   
 }
 
@@ -229,7 +232,11 @@ finalFires %>%
   theme(legend.position = "bottom") +
   labs(title = "So Cal Fires 2025")
 
-ggsave("So_Cal_Fires_2025/plots/So_Cal_Fires_2025_LACO_SUP_DIST.png")
+ggsave("So_Cal_Fires_2025/plots/So_Cal_Fires_2025_LACO_SUP_DIST.png",
+       width = 7.94,
+       height = 8.12,
+       units = "in",
+       dpi = 300)
 
 addrs_with_fire %>%
   st_drop_geometry() %>%
@@ -238,9 +245,9 @@ addrs_with_fire %>%
 
 library(scales)
 
-# calculate monetary amount using median home price
+# calculate monetary amount using average home price
 
-est_homes_burned <- .8
+est_homes_burned <- .8 # estimate-not all homes burned down but most have damage
 
 tmp <-
   addrs_with_fire %>%
@@ -248,14 +255,14 @@ tmp <-
   filter(UseType == "Residential") %>%
   count(EventName, name = "Residential_in_Footprint") %>% 
   mutate(PcntHomesBurned = Residential_in_Footprint * est_homes_burned,
-         HomePrice = case_when(EventName == "EATON" ~ 
+         HomePrice = case_when(EventName == "EATON" ~ # cal home prices replace minus land price
                                  1248945 - 400000,  # https://www.zillow.com/home-values/30187/altadena-ca/
                                EventName == "PALISADES" ~ 
                                  3462178 - 400000, # https://www.zillow.com/home-values/19810/pacific-palisades-los-angeles-ca/
                                TRUE ~ 948383 - 400000), # https://www.zillow.com/home-values/12447/los-angeles-ca/
          TotalResidentialLosses = PcntHomesBurned * HomePrice) %>% 
   arrange(desc(TotalResidentialLosses)) %>% 
-  bind_rows( summarise(., across(where(is.numeric), ~ sum(., na.rm = TRUE ) ))) %>% 
+  bind_rows( summarise( select(., -HomePrice), across(where(is.numeric), ~ sum(., na.rm = TRUE ) ))) %>% 
   `[[<-`(nrow(.), 1, value = "Total Residences")
 
 label_currency(accuracy = .01, scale = 1e-09, prefix = "USD ",
@@ -265,5 +272,6 @@ label_currency(accuracy = .01, scale = 1e-09, prefix = "USD ",
 tmp$TotalResidentialLosses <- label_currency(scale_cut = cut_short_scale())(tmp$TotalResidentialLosses)
 
 tmp %>% 
-  mutate(across(c(Residential_in_Footprint, PcntHomesBurned, HomePrice), ~ comma (.))) %>% 
+  mutate(across(c(Residential_in_Footprint, PcntHomesBurned, HomePrice), ~ comma (.)),
+         HomePrice  = replace_na(HomePrice , "")) %>% 
   write.table(., file = "clipboard-16384", sep = "\t", row.names = FALSE)
