@@ -11,6 +11,7 @@ Most of my visualization work is coded with R, directories will include datasets
 |:-------------------------------------------------|:--------------------------------------|:------------------------------|
 | [SoCalFires 2025](./So_Cal_Fires_2025)           | tidyverse, sf                         | SoCalFires 2025, LACO Parcels |
 | [Residential Land](./LACO_Residential_Land)      | tidyverse, sf                         | LACO Assessor's data          |
+| [Riverside Population](./Riv_CO_Pop_Pyramids)    | tidyverse, sf, tidycensus, magick     | US Census, RIVCO Sup Districs |
 
 
 # Gallery
@@ -27,7 +28,7 @@ This analysis shows that approximately 15,131 homes were damaged and the cost to
 |KENNETH       |                                6|                4.8|      548,383|                    $2.63M|
 |LIDIA         |                                5|                4.0|      548,383|                    $2.19M|
 |SUNSET        |                                1|                0.8|      548,383|                     $439K|
-|Total         |                           18,914|           15,131.2|            0|                    $31.6B|
+|Total         |                           18,914|           15,131.2|             |                    $31.6B|
 
 ![Map of SoCal Fires](./So_Cal_Fires_2025/plots/So_Cal_Fires_2025_LACO_SUP_DIST.png)
 
@@ -38,6 +39,14 @@ This analysis shows that approximately 15,131 homes were damaged and the cost to
 - The total land area in the County is 5,209 square miles.
 
 ![Map of Residential Use Areas](./LACO_Residential_Land/output/LACO_Parcels_Disolved.png)
+
+
+## [Riverside County Population Pyramids](./Riv_CO_Pop_Pyramids)
+
+- This analysis breaks down the population in each of the five supervisorial districts of Riverside County.
+- It uses U.S Census data 2019-2023 5-year American Community Survey
+
+![Population Pyramid by Supervisorial District](./Riv_CO_Pop_Pyramids/plots/RIV_CO_POP_PYRM.png)
 
 
 

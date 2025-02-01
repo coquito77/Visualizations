@@ -418,7 +418,7 @@ plot_function <- function() {
     scale_x_continuous(
       labels = ~ number_format(scale = .001, suffix = "k")(abs(.x)),
       limits = 30000 * c(-1,1)  ),
-    facet_wrap(~DISTRICT),
+    facet_wrap(~DISTRICT, ncol =2),
     scale_y_discrete(labels = ~ str_remove_all(.x, "Age\\s|\\syears")),
     labs(x = "", 
          y = "Age groups", 
@@ -439,25 +439,26 @@ p_Sex_Gender <-
   geom_col(data = Sup_Age_Sex, 
            aes(x = value, 
                y = AGEGROUP, 
-               fill = SEX), width = 0.95, alpha = 0.75) + 
+               fill = SEX), width = 0.95, 
+           alpha = 0.75) + 
   geom_text(data = 
               Sup_Age_Sex %>% 
               filter(SEX == "Male",
                      grepl("1", DISTRICT), 
-                     grepl("older", AGEGROUP)) %>%
+                     grepl("74", AGEGROUP)) %>%
               distinct(DISTRICT, y = AGEGROUP) %>%
               ungroup %>%
               mutate(x = -25000), aes(x = x, y = y, 
-                                      label = "Males"),
+                                      label = "Male"),
             color = "#2c7fb8") +
   geom_text(data = Sup_Age_Sex %>% 
               filter(SEX == "Female",
                      grepl("1", DISTRICT), 
-                     grepl("older", AGEGROUP)) %>%
+                     grepl("74", AGEGROUP)) %>%
               distinct(DISTRICT, y = AGEGROUP) %>%
               ungroup %>%
               mutate(x = 25000), aes(x = x, y = y, 
-                                     label = "Females"),
+                                     label = "Female"),
             color = "#de2d26") +
   scale_fill_manual(name = "Sex", values = c("#de2d26", "#2c7fb8")) +
   plot_function() + 
@@ -501,23 +502,24 @@ p_Sex_Gender_Excess <-
               tmp %>% 
               filter(SEX == "Male",
                      grepl("1", DISTRICT), 
-                     grepl("older", AGEGROUP)) %>%
+                     grepl("79", AGEGROUP)) %>%
               distinct(DISTRICT, y = AGEGROUP) %>%
               ungroup %>%
               mutate(x = -25000), aes(x = x, y = y, 
-                                      label = "Males"),
+                                      label = "Male"),
             color = "#006d2c") +
   geom_text(data = tmp %>% 
               filter(SEX == "Female",
                      grepl("1", DISTRICT), 
-                     grepl("older", AGEGROUP)) %>%
+                     grepl("79", AGEGROUP)) %>%
               distinct(DISTRICT, y = AGEGROUP) %>%
               ungroup %>%
               mutate(x = 25000), aes(x = x, y = y, 
-                                     label = "Females"),
+                                     label = "Female"),
             color = "#993404") +
   plot_function() +
-  theme(legend.position = c(0.8, 0.2),
+  theme(legend.position = "inside", 
+        legend.position.inside = c(0.75, 0.15),
         text = element_text(colour = "grey25"),
         strip.text = element_text(
           size = 10, face = "bold",colour = "grey25"),
@@ -571,26 +573,26 @@ p_Sex_Race <-
   geom_text(data = Sup_Age_RaceGender %>% 
               filter(SEX == "Male",
                      grepl("1", DISTRICT), 
-                     grepl("older", AGEGROUP)) %>%
+                     grepl("84", AGEGROUP)) %>%
               distinct(DISTRICT, y = AGEGROUP) %>%
               ungroup %>%
               mutate(x = -25000), aes(x = x, y = y, 
-                                      label = "Males")) +
+                                      label = "Male")) +
   geom_text(data = Sup_Age_RaceGender %>% 
               filter(SEX == "Female",
                      grepl("1", DISTRICT), 
-                     grepl("older", AGEGROUP)) %>%
+                     grepl("84", AGEGROUP)) %>%
               distinct(DISTRICT, y = AGEGROUP) %>%
               ungroup %>%
               mutate(x = 25000), aes(x = x, y = y, 
-                                     label = "Females")) +
+                                     label = "Female")) +
   scale_fill_brewer(name = "Race",
                     palette = "Dark2") +
   plot_function() +
   scale_x_continuous(
     labels = ~ number_format(scale = .001, suffix = "k")(abs(.x)),
     limits = 40000 * c(-1,1)  ) +  # need to readjust the limits because of bigger groups
-  theme(legend.position = c(0.85, 0.2),
+  theme(legend.position = "inside", legend.position.inside = c(0.80, 0.15),
         text = element_text(colour = "grey25"),
         strip.text = element_text(
           size = 10, face = "bold",colour = "grey25"),
@@ -661,13 +663,14 @@ library(magick)
 
 annotation_custom2 <- 
   function(grob, xmin = -Inf, xmax = Inf, 
-            ymin = -Inf, ymax = Inf, data){ layer(data = data, 
-                                                  stat = StatIdentity,
-                                                  position = PositionIdentity, 
-                                                  geom = ggplot2:::GeomCustomAnn,
-                                                  inherit.aes = TRUE, params = list(grob = grob,
-                                                                                    xmin = xmin, xmax = xmax, 
-                                                                                    ymin = ymin, ymax = ymax))}
+           ymin = -Inf, ymax = Inf, data){ layer(data = data, 
+                                                 stat = StatIdentity,
+                                                 position = PositionIdentity, 
+                                                 geom = ggplot2:::GeomCustomAnn,
+                                                 inherit.aes = TRUE,
+                                                 params = list(grob = grob,
+                                                               xmin = xmin, xmax = xmax, 
+                                                               ymin = ymin, ymax = ymax))}
 
 # create an image of a circle that will be used to modify the Supervisors headshots
 
@@ -695,33 +698,71 @@ png_files <-
 
 for (i in seq_along(png_files)) {
   
-  x <- image_read(png_files[i])
-  mask <- image_read(tf) %>% 
-    image_scale(., as.character(image_info(x)$width - 40))
-  compose_types()
+  x <- 
+    image_read(png_files[i]) %>% 
+    image_resize(geometry_size_pixels(1000, 1000, preserve_aspect = TRUE))
   
-  x <- image_composite(mask, x, operator = "Plus")
+  mask <- 
+    image_read(tf) %>% 
+    image_scale(., as.character(image_info(x)$width - 200))
   
-  # x <-
-  #    image_fill(x, "transparent", point = "+404+404", fuzz = 10) # %>% # bottom right
-  #   image_fill(., "transparent", point = "+1+1", fuzz = 50) %>% # top left
-  # image_fill(., "transparent", point = "+1+405", fuzz = 50) # %>% # bottom left
-  #   image_fill(., "transparent", point = "+445+1", fuzz = 50) # top left
+  # compose_types()
   
-  x <- annotation_custom2(
-    rasterGrob(x, interpolate = TRUE),
-    xmin = 23000, xmax = 10500, ymin = 15.75, ymax = 18.5,
-    data = data.frame(DISTRICT = case_when(grepl("Medina_", png_files[i]) ~ "Sup. District 1",
-                                           grepl("_Spiegel", png_files[i]) ~ "Sup. District 2",
-                                           grepl("Washington_", png_files[i]) ~ "Sup. District 3",
-                                           grepl("Perez_", png_files[i]) ~ "Sup. District 4",
-                                           grepl("_Gutierre", png_files[i]) ~ "Sup. District 5")))
+  x <- 
+    image_composite(mask, x, 
+                    operator = "Plus")
+  
+  x <-
+    image_fill(x, "transparent", point = "+790+790", fuzz = 10) %>% # bottom right
+    image_fill(., "transparent", point = "+1+1", fuzz = 10) %>% # top left
+    image_fill(., "transparent", point = "+1+790", fuzz = 10)  %>% # bottom left
+    image_fill(., "transparent", point = "+790+1", fuzz = 10) # top left
+  
+  # create objects to plot on the map
+  
+  plot_pic <- 
+    annotation_custom2(
+      rasterGrob(x, interpolate = TRUE),
+      xmin = 11500, xmax = 22000, 
+      ymin = 16.75, ymax = 18.5,
+      data = data.frame(DISTRICT = case_when(grepl("Medina_", png_files[i]) ~ "Sup. District 1",
+                                             grepl("_Spiegel", png_files[i]) ~ "Sup. District 2",
+                                             grepl("Washington_", png_files[i]) ~ "Sup. District 3",
+                                             grepl("Perez_", png_files[i]) ~ "Sup. District 4",
+                                             grepl("_Gutierre", png_files[i]) ~ "Sup. District 5")))
   
   assign(  case_when(grepl("Medina_", png_files[i]) ~ "bos_pic1",
                      grepl("_Spiegel", png_files[i]) ~ "bos_pic2",
                      grepl("Washington_", png_files[i]) ~ "bos_pic3",
                      grepl("Perez_", png_files[i]) ~ "bos_pic4",
-                     grepl("_Gutierre", png_files[i]) ~ "bos_pic5") , x , pos = 1 )
+                     grepl("_Gutierre", png_files[i]) ~ "bos_pic5") , plot_pic , pos = 1 )
+  
+  districts <- 
+    case_when(grepl("Medina_", png_files[i]) ~ "1",
+              grepl("_Spiegel", png_files[i]) ~ "2",
+              grepl("Washington_", png_files[i]) ~ "3",
+              grepl("Perez_", png_files[i]) ~ "4",
+              grepl("_Gutierre", png_files[i]) ~ "5")
+  
+  supCoords <- 
+    lbsDPSS_supDist2021[which(lbsDPSS_supDist2021$DISTRIC == districts), c(6:7)]
+  
+  plot_map <- 
+    annotation_custom2(
+      rasterGrob(x, interpolate = TRUE),
+      xmin = supCoords$lon - 12000, xmax = supCoords$lon + 12000, 
+      ymin = supCoords$lat + 2500, ymax = supCoords$lat + 7500,
+      data = data.frame(DIST = case_when(grepl("Medina_", png_files[i]) ~ "Sup. District 1",
+                                         grepl("_Spiegel", png_files[i]) ~ "Sup. District 2",
+                                         grepl("Washington_", png_files[i]) ~ "Sup. District 3",
+                                         grepl("Perez_", png_files[i]) ~ "Sup. District 4",
+                                         grepl("_Gutierre", png_files[i]) ~ "Sup. District 5")))
+  
+  assign(  case_when(grepl("Medina_", png_files[i]) ~ "bos_map_pic1",
+                     grepl("_Spiegel", png_files[i]) ~ "bos_map_pic2",
+                     grepl("Washington_", png_files[i]) ~ "bos_map_pic3",
+                     grepl("Perez_", png_files[i]) ~ "bos_map_pic4",
+                     grepl("_Gutierre", png_files[i]) ~ "bos_map_pic5") , plot_map , pos = 1 )
   
   rm(x)
   
@@ -731,15 +772,18 @@ for (i in seq_along(png_files)) {
 
 Cairo::CairoPDF(file = "./Riv_CO_Pop_Pyramids/plots/plots_pyramids.pdf",
                 #units = "in", dpi = 150,
-                width = 11, 
-                height = 8, 
+                width = 8, 
+                height = 11, 
                 pointsize = 20)
 
 # plot Sex vs Gender and add the plots of the Sup District Supervisors
 
-p_Sex_Gender + bos_pic1 +
-  bos_pic2 + bos_pic3 + 
-  bos_pic4 + bos_pic5
+p_Sex_Gender + 
+  bos_pic1 +
+  bos_pic2 + 
+  bos_pic3 + 
+  bos_pic4 +
+  bos_pic5
 
 ggsave("./Riv_CO_Pop_Pyramids/plots/RIV_CO_POP_PYRM.png",
        width = 7.94,
@@ -751,7 +795,12 @@ p_Sex_Gender_Excess
 
 p_Sex_Race
 
-p_Sup_Dist_Map
+p_Sup_Dist_Map +
+  bos_map_pic1 +
+  bos_map_pic2 +
+  bos_map_pic3 +
+  bos_map_pic4 +
+  bos_map_pic5
 
 dev.off()
 
