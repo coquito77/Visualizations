@@ -10,7 +10,7 @@ Most of my visualization work is coded with R, directories will include datasets
 | **Topic**                                        | **Main Packages**                     | **Source**                    |
 |:-------------------------------------------------|:--------------------------------------|:------------------------------|
 | [SoCalFires 2025](./So_Cal_Fires_2025)           | tidyverse, sf                         | SoCalFires 2025, LACO Parcels |
-| [Residential Land](./LACO_Residential_Land)      | tidyverse, sf                         | LACO Assessor's data          |
+| [Residential Land](./LACO_Residential_Land)      | geopandas, matplotlib, requests       | LACO Assessor's data          |
 | [Riverside Population](./Riv_CO_Pop_Pyramids)    | tidyverse, sf, tidycensus, magick     | US Census, RIVCO Sup Districs |
 
 
