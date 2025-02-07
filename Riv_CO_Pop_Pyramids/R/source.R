@@ -25,7 +25,7 @@ c("/R","/data","/plots") %>%
 
 rm(list = ls()) #start with empty workspace
 
-if (!file.exists("./Riv_CO_Pop_Pyramids/data/CA_RI_RACE_2019-2023 5-year ACS.parquet")){
+if (!file.exists("./Riv_CO_Pop_Pyramids/data/CA_RI_RACE_2019-2023 5-year ACS.parquet")) {
   
   # get shape file of Riverside County Supervisory Districts
   
@@ -138,40 +138,45 @@ if (!file.exists("./Riv_CO_Pop_Pyramids/data/CA_RI_RACE_2019-2023 5-year ACS.par
   
   if (FALSE) {
     
-    split_tract <- CO_Population %>%
+    split_tract <- 
+      CO_Population %>%
       filter(GEOID == "06065042717") %>%
       slice(1) %>% 
       select(GEOID)
     
     # create square buffers by 25, 5 and 1 miles. One mile is 5280 feet
-    Buffer_25_Miles <- split_tract %>% 
+    Buffer_25_Miles <-
+      split_tract %>% 
       st_buffer(., 5280 * 25) %>%
       st_bbox 
     
-    Buffer_05_Miles <- split_tract %>% 
+    Buffer_05_Miles <- 
+      split_tract %>% 
       st_buffer(., 5280 * 5) %>%
       st_bbox
     
-    Buffer_01_Miles <- split_tract %>% 
+    Buffer_01_Miles <- 
+      split_tract %>% 
       st_buffer(., 5280 * 1) %>%
       st_bbox
+    
     
     split_tract_p <- 
       ggplot() +
       geom_sf(data = supDist2021, aes(fill = DISTRICT),
               linewidth = .1, alpha = .7) +
-      coord_sf(#default_crs = sf::st_crs(2229),
-        xlim = c(Buffer_25_Miles[3]
-                 ,Buffer_25_Miles[1]), 
-        ylim = c(Buffer_25_Miles[2]
-                 ,Buffer_25_Miles[4]),
-        expand = FALSE) +
+      # coord_sf(#default_crs = sf::st_crs(2229),
+      #   xlim = c(Buffer_05_Miles[3]
+      #            ,Buffer_05_Miles[1]), 
+      #   ylim = c(Buffer_05_Miles[2]
+      #            ,Buffer_05_Miles[4]),
+      #   expand = FALSE) +
       scale_fill_distiller(palette = "Set1") +
       theme(legend.position = "none")
     
     split_tract_p <- 
       split_tract_p +
-      geom_sf(data = Buffer_05_Miles %>% 
+      geom_sf(data = Buffer_01_Miles %>% 
                 st_as_sfc, aes(), 
               color = "black",
               fill = "NA",
@@ -179,11 +184,11 @@ if (!file.exists("./Riv_CO_Pop_Pyramids/data/CA_RI_RACE_2019-2023 5-year ACS.par
       geom_sf(data = split_tract, fill = NA, color = "red", 
               linewidth = .1, alpha = .9) +
       coord_sf(#default_crs = sf::st_crs(2229),
-        xlim = c(Buffer_25_Miles[3]
-                 ,Buffer_25_Miles[1]), 
-        ylim = c(Buffer_25_Miles[2]
-                 ,Buffer_25_Miles[4]),
-        expand = FALSE)
+        xlim = c(supDist2021 %>% st_bbox %>% .[1]
+                 ,Buffer_25_Miles[3])
+        # ,ylim = c(Buffer_25_Miles[2]
+        #          ,Buffer_25_Miles[4])
+      )
     
     library(cowplot)
     library(scales)
@@ -197,13 +202,19 @@ if (!file.exists("./Riv_CO_Pop_Pyramids/data/CA_RI_RACE_2019-2023 5-year ACS.par
     
     title <- 
       paste0("Census Tract ", split_tract$GEOID,
-             "\nis split between Supervisorial Districs ",
-             tmpLbs[1,2],  ", ", tmpLbs[2,2], ", and ", tmpLbs[3,2], ", ",
-             percent(tmpLbs[1,3]),  ", ", percent(tmpLbs[2,3]), ", and ", percent(tmpLbs[3,3]),
-             " respectively")
+             " is divided among Supervisorial\nDistricts ",
+             #tmpLbs[1,2],  ", ", tmpLbs[2,2], ", and ", tmpLbs[3,2], ", ",
+             tmpLbs$DISTRICT %>% 
+               paste(., collapse = ", ") %>% sub(",([^,]*)$", ", and\\1", .),
+             ", with overlaps of ",
+             # percent(tmpLbs[1,3]),  ", ", percent(tmpLbs[2,3]), ", and ", percent(tmpLbs[3,3]),
+             tmpLbs$pcnt_Area_Tract_Sup_ovr_Tract %>% 
+               percent() %>%
+               paste(., collapse = ", ") %>% sub(",([^,]*)$", ", and\\1", .),
+             " of the districts, respectively.")
     
     subtitle <-
-      paste0( "For this analysis all the population of this tract was assigned to Sup. District ", 
+      paste0( "For this analysis, all the population of this tract was assigned to Sup. District ", 
               tmpLbs[1,2] )
     
     areaPlot <- 
